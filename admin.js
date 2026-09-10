@@ -8,6 +8,8 @@ const newButton = document.querySelector("#newButton");
 const listPin = document.querySelector("#listPin");
 const loadPropertiesButton = document.querySelector("#loadPropertiesButton");
 const adminPropertyList = document.querySelector("#adminPropertyList");
+const metricsPin = document.querySelector("#metricsPin");
+const loadMetricsButton = document.querySelector("#loadMetricsButton");
 let loadedProperties = [];
 
 function setStatus(message, isError = false) {
@@ -77,6 +79,25 @@ async function loadSavedProperties(pin) {
 
   loadedProperties = Array.isArray(result.properties) ? result.properties : [];
   renderPropertyList();
+}
+
+async function loadMetrics(pin) {
+  const response = await fetch("/api/metrics", {
+    headers: {
+      "x-admin-pin": pin
+    },
+    cache: "no-store"
+  });
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "No se pudieron cargar las metricas");
+  }
+
+  const metrics = result.metrics || {};
+  document.querySelector("#adminViewsMetric").textContent = Number(metrics.views || 0);
+  document.querySelector("#adminWhatsappMetric").textContent = Number(metrics.whatsapp || 0);
+  document.querySelector("#adminLeadsMetric").textContent = Number(metrics.leads || 0);
 }
 
 function splitFeatures(value) {
@@ -169,6 +190,16 @@ loadPropertiesButton.addEventListener("click", async () => {
     setStatus("Lista cargada.");
   } catch (error) {
     setStatus(error.message || "No se pudo cargar la lista", true);
+  }
+});
+
+loadMetricsButton.addEventListener("click", async () => {
+  try {
+    setStatus("Cargando metricas...");
+    await loadMetrics(metricsPin.value);
+    setStatus("Metricas actualizadas.");
+  } catch (error) {
+    setStatus(error.message || "No se pudieron cargar las metricas", true);
   }
 });
 

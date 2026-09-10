@@ -62,17 +62,20 @@ const fallbackProperties = [
 
 let properties = [...fallbackProperties];
 
-const metrics = JSON.parse(localStorage.getItem("ariMetrics") || '{"views":0,"whatsapp":0,"leads":0}');
 const list = document.querySelector("#propertyList");
 const searchInput = document.querySelector("#searchInput");
 const operationFilter = document.querySelector("#operationFilter");
 const typeFilter = document.querySelector("#typeFilter");
 
-function saveMetrics() {
-  localStorage.setItem("ariMetrics", JSON.stringify(metrics));
-  document.querySelector("#viewsMetric").textContent = metrics.views;
-  document.querySelector("#whatsappMetric").textContent = metrics.whatsapp;
-  document.querySelector("#leadsMetric").textContent = metrics.leads;
+function trackMetric(event) {
+  fetch("/api/metrics", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ event }),
+    keepalive: true
+  }).catch(() => {});
 }
 
 function whatsappUrl(text) {
@@ -136,8 +139,7 @@ function selectProperty(id) {
     return;
   }
 
-  metrics.views += 1;
-  saveMetrics();
+  trackMetric("views");
 
   document.querySelector("#detailOperation").textContent = property.operation;
   document.querySelector("#detailTitle").textContent = property.title;
@@ -190,13 +192,11 @@ async function loadProperties() {
 
 function setupContactLinks() {
   const publishText = "Hola, quiero publicar un inmueble con Al Reves Inmobiliario.";
-  document.querySelector("#headerWhatsapp").href = whatsappUrl("Hola, quiero informacion de inmuebles en Nechi.");
   document.querySelector("#publishWhatsapp").href = whatsappUrl(publishText);
 
-  document.querySelectorAll("#headerWhatsapp, #publishWhatsapp, #detailWhatsapp").forEach((link) => {
+  document.querySelectorAll("#publishWhatsapp, #detailWhatsapp").forEach((link) => {
     link.addEventListener("click", () => {
-      metrics.whatsapp += 1;
-      saveMetrics();
+      trackMetric("whatsapp");
     });
   });
 }
@@ -212,9 +212,8 @@ function setupLeadForm() {
       `Interes: ${data.get("interest")}`,
       `Mensaje: ${data.get("message") || "Sin mensaje adicional"}`
     ].join("\n");
-    metrics.leads += 1;
-    metrics.whatsapp += 1;
-    saveMetrics();
+    trackMetric("leads");
+    trackMetric("whatsapp");
     window.open(whatsappUrl(text), "_blank", "noopener,noreferrer");
     event.currentTarget.reset();
   });
@@ -231,7 +230,6 @@ async function init() {
   selectProperty(properties[0]?.id);
   setupContactLinks();
   setupLeadForm();
-  saveMetrics();
 }
 
 init();

@@ -94,6 +94,19 @@
         </form>
 
         <aside class="admin-help">
+          <h2>Metricas privadas</h2>
+          <div class="admin-list-control">
+            <label for="metricsPin">
+              PIN para ver metricas
+              <input id="metricsPin" type="password" placeholder="PIN de administracion" />
+            </label>
+            <button type="button" id="loadMetricsButton" class="secondary">Ver metricas</button>
+          </div>
+          <div class="metric-cards admin-metrics">
+            <article><strong id="adminViewsMetric">0</strong><span>vistas de fichas</span></article>
+            <article><strong id="adminWhatsappMetric">0</strong><span>clics a WhatsApp</span></article>
+            <article><strong id="adminLeadsMetric">0</strong><span>leads enviados</span></article>
+          </div>
           <h2>Inmuebles guardados</h2>
           <div class="admin-list-control">
             <label for="listPin">

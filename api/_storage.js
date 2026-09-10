@@ -1,6 +1,7 @@
 import { list, put } from "@vercel/blob";
 
 const dataPath = "data/properties.json";
+const metricsPath = "data/metrics.json";
 
 export async function readProperties() {
   const { blobs } = await list({ prefix: dataPath, limit: 1 });
@@ -20,6 +21,30 @@ export async function readProperties() {
 
 export async function writeProperties(properties) {
   await put(dataPath, JSON.stringify(properties, null, 2), {
+    access: "public",
+    allowOverwrite: true,
+    contentType: "application/json"
+  });
+}
+
+export async function readMetrics() {
+  const { blobs } = await list({ prefix: metricsPath, limit: 1 });
+  const blob = blobs.find((item) => item.pathname === metricsPath);
+
+  if (!blob) {
+    return { views: 0, whatsapp: 0, leads: 0 };
+  }
+
+  const response = await fetch(blob.url, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error("Could not read metrics storage");
+  }
+
+  return response.json();
+}
+
+export async function writeMetrics(metrics) {
+  await put(metricsPath, JSON.stringify(metrics, null, 2), {
     access: "public",
     allowOverwrite: true,
     contentType: "application/json"

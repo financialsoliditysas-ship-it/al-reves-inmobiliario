@@ -394,6 +394,10 @@ label {
   gap: 12px;
 }
 
+.admin-metrics {
+  grid-template-columns: 1fr;
+}
+
 .metric-cards article {
   display: grid;
   gap: 4px;
