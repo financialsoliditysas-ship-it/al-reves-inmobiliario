@@ -23,7 +23,8 @@ async function uploadFiles(files, pin) {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, "-");
     const blob = await upload(`inmuebles/${Date.now()}-${safeName}`, file, {
       access: "public",
-      handleUploadUrl: `/api/upload?pin=${encodeURIComponent(pin)}`
+      handleUploadUrl: "/api/upload",
+      clientPayload: pin
     });
     urls.push(blob.url);
   }

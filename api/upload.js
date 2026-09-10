@@ -15,21 +15,24 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const configuredPin = process.env.ADMIN_PIN;
-  const providedPin = req.headers["x-admin-pin"] || new URL(req.url, "https://local").searchParams.get("pin");
-
-  if (!configuredPin || providedPin !== configuredPin) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
-
   try {
     const jsonResponse = await handleUpload({
       body: req.body,
       request: req,
-      onBeforeGenerateToken: async (pathname) => ({
-        allowedContentTypes,
-        tokenPayload: JSON.stringify({ pathname })
-      }),
+      onBeforeGenerateToken: async (pathname, clientPayload) => {
+        const configuredPin = process.env.ADMIN_PIN;
+        const providedPin = clientPayload;
+
+        if (!configuredPin || providedPin !== configuredPin) {
+          throw new Error("Unauthorized");
+        }
+
+        return {
+          allowedContentTypes,
+          addRandomSuffix: true,
+          tokenPayload: JSON.stringify({ pathname })
+        };
+      },
       onUploadCompleted: async () => {}
     });
 
