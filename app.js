@@ -1,6 +1,6 @@
 const whatsappNumber = "573147637745";
 
-const properties = [
+const fallbackProperties = [
   {
     id: "casa-la-playa",
     title: "Casa amplia lista para vender en Nechi",
@@ -60,6 +60,8 @@ const properties = [
   }
 ];
 
+let properties = [...fallbackProperties];
+
 const metrics = JSON.parse(localStorage.getItem("ariMetrics") || '{"views":0,"whatsapp":0,"leads":0}');
 const list = document.querySelector("#propertyList");
 const searchInput = document.querySelector("#searchInput");
@@ -95,6 +97,11 @@ function renderProperties() {
     );
   });
 
+  if (filtered.length === 0) {
+    list.innerHTML = '<p class="muted">No hay inmuebles con esos filtros.</p>';
+    return;
+  }
+
   list.innerHTML = filtered
     .map(
       (property) => `
@@ -125,6 +132,10 @@ function renderProperties() {
 
 function selectProperty(id) {
   const property = properties.find((item) => item.id === id) || properties[0];
+  if (!property) {
+    return;
+  }
+
   metrics.views += 1;
   saveMetrics();
 
@@ -159,6 +170,22 @@ function selectProperty(id) {
   document.querySelector("#detailVideo").href = property.videoUrl;
   document.querySelector("#detailWhatsapp").href = whatsappUrl(`Hola, quiero informacion sobre: ${property.title} (${property.price})`);
   document.querySelector("#detalle").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function loadProperties() {
+  try {
+    const response = await fetch("/api/properties", { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error("Backend unavailable");
+    }
+
+    const data = await response.json();
+    if (Array.isArray(data.properties) && data.properties.length > 0) {
+      properties = data.properties;
+    }
+  } catch {
+    properties = [...fallbackProperties];
+  }
 }
 
 function setupContactLinks() {
@@ -197,9 +224,14 @@ searchInput.addEventListener("input", renderProperties);
 operationFilter.addEventListener("change", renderProperties);
 typeFilter.addEventListener("change", renderProperties);
 
-document.querySelector("#heroCount").textContent = properties.length;
-renderProperties();
-selectProperty(properties[0].id);
-setupContactLinks();
-setupLeadForm();
-saveMetrics();
+async function init() {
+  await loadProperties();
+  document.querySelector("#heroCount").textContent = properties.length;
+  renderProperties();
+  selectProperty(properties[0]?.id);
+  setupContactLinks();
+  setupLeadForm();
+  saveMetrics();
+}
+
+init();
