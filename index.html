@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Al Reves Inmobiliario | Arriendos y ventas en Nechi</title>
+    <meta
+      name="description"
+      content="Casas, apartamentos, habitaciones y locales en venta o arriendo en Nechi. Fotos, videos, ubicacion y contacto directo."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#inicio" aria-label="Inicio Al Reves Inmobiliario">
+        <span class="brand-mark">AR</span>
+        <span>
+          <strong>Al Reves Inmobiliario</strong>
+          <small>Ventas y arriendos Nechi</small>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="#inmuebles">Inmuebles</a>
+        <a href="#publicar">Publicar</a>
+        <a href="#metricas">Metricas</a>
+      </nav>
+      <a class="top-action" id="headerWhatsapp" href="#" target="_blank" rel="noreferrer">WhatsApp</a>
+    </header>
+
+    <main id="inicio">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Plataforma local inmobiliaria</p>
+          <h1>Encuentra o publica inmuebles en Nechi sin enredarte.</h1>
+          <p>
+            Fotos claras, videos, ubicacion, filtros simples y contacto directo para vender,
+            arrendar y captar interesados desde redes y WhatsApp.
+          </p>
+          <div class="hero-actions">
+            <a class="primary" href="#inmuebles">Ver inmuebles</a>
+            <a class="secondary" href="#lead">Quiero que me llamen</a>
+          </div>
+        </div>
+        <div class="hero-panel">
+          <img
+            src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1400&q=80"
+            alt="Casa familiar con fachada moderna"
+          />
+          <div class="hero-badge">
+            <strong id="heroCount">0</strong>
+            <span>inmuebles activos</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="search-band" id="inmuebles">
+        <div>
+          <p class="eyebrow">Busqueda rapida</p>
+          <h2>Inmuebles disponibles</h2>
+        </div>
+        <div class="filters" role="search">
+          <input id="searchInput" type="search" placeholder="Buscar por barrio, tipo o palabra clave" />
+          <select id="operationFilter" aria-label="Operacion">
+            <option value="todos">Venta y arriendo</option>
+            <option value="Arriendo">Arriendo</option>
+            <option value="Venta">Venta</option>
+          </select>
+          <select id="typeFilter" aria-label="Tipo de inmueble">
+            <option value="todos">Todos los tipos</option>
+            <option value="Casa">Casa</option>
+            <option value="Apartamento">Apartamento</option>
+            <option value="Local">Local</option>
+            <option value="Habitacion">Habitacion</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <div class="property-list" id="propertyList" aria-live="polite"></div>
+        <aside class="lead-panel" id="lead">
+          <p class="eyebrow">Captacion de leads</p>
+          <h2>Deja tus datos</h2>
+          <p class="muted">Te llamamos para agendar visita, enviar opciones o publicar tu inmueble.</p>
+          <form id="leadForm">
+            <label for="leadName">
+              Nombre
+              <input id="leadName" name="name" required placeholder="Tu nombre" />
+            </label>
+            <label for="leadPhone">
+              Celular
+              <input id="leadPhone" name="phone" required placeholder="300 000 0000" />
+            </label>
+            <label for="leadInterest">
+              Interes
+              <select id="leadInterest" name="interest" required>
+                <option value="Busco arriendo">Busco arriendo</option>
+                <option value="Busco comprar">Busco comprar</option>
+                <option value="Quiero publicar">Quiero publicar</option>
+              </select>
+            </label>
+            <label for="leadMessage">
+              Mensaje
+              <textarea id="leadMessage" name="message" rows="4" placeholder="Barrio, presupuesto o datos del inmueble"></textarea>
+            </label>
+            <button type="submit">Enviar por WhatsApp</button>
+          </form>
+        </aside>
+      </section>
+
+      <section class="detail-section" id="detalle">
+        <div class="detail-shell">
+          <div class="gallery">
+            <img id="mainImage" alt="Foto principal del inmueble seleccionado" />
+            <div class="thumbs" id="thumbs"></div>
+          </div>
+          <div class="detail-copy">
+            <span class="pill" id="detailOperation"></span>
+            <h2 id="detailTitle"></h2>
+            <p class="price" id="detailPrice"></p>
+            <p class="muted" id="detailLocation"></p>
+            <p id="detailDescription"></p>
+            <div class="features" id="detailFeatures"></div>
+            <div class="detail-actions">
+              <a class="primary" id="detailWhatsapp" target="_blank" rel="noreferrer">Contactar</a>
+              <a class="secondary" id="detailVideo" target="_blank" rel="noreferrer">Ver video</a>
+              <a class="secondary" id="detailMap" target="_blank" rel="noreferrer">Google Maps</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="metrics" id="metricas">
+        <div>
+          <p class="eyebrow">Seguimiento comercial</p>
+          <h2>Metricas del MVP</h2>
+          <p class="muted">Datos guardados en este navegador para probar interes, clics y contactos antes de conectar CRM.</p>
+        </div>
+        <div class="metric-cards">
+          <article><strong id="viewsMetric">0</strong><span>vistas de fichas</span></article>
+          <article><strong id="whatsappMetric">0</strong><span>clics a WhatsApp</span></article>
+          <article><strong id="leadsMetric">0</strong><span>leads enviados</span></article>
+        </div>
+      </section>
+
+      <section class="publish" id="publicar">
+        <div>
+          <p class="eyebrow">Para propietarios</p>
+          <h2>Publicamos tu inmueble y filtramos interesados.</h2>
+          <p>
+            El flujo inicial es simple: recibimos fotos, video, barrio, canon o precio,
+            condiciones y datos de contacto. Se publica, se mide el interes y se agenda visita.
+          </p>
+        </div>
+        <a class="primary" id="publishWhatsapp" href="#" target="_blank" rel="noreferrer">Publicar mi inmueble</a>
+      </section>
+    </main>
+
+    <footer>
+      <span>Al Reves Inmobiliario - MVP comercial</span>
+      <span>Nechi, Antioquia</span>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

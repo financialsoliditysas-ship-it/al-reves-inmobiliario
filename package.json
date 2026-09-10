@@ -1,0 +1,10 @@
+{
+  "name": "al-reves-inmobiliario-mvp",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve .",
+    "build": "node -e \"console.log('Static MVP ready')\""
+  }
+}
