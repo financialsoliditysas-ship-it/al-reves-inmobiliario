@@ -494,6 +494,44 @@ footer {
   color: #a63b2b;
 }
 
+.admin-actions,
+.admin-list-control {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-actions {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.admin-property-list {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-property-item {
+  display: grid;
+  min-height: auto;
+  justify-content: start;
+  gap: 4px;
+  padding: 12px;
+  color: var(--ink);
+  text-align: left;
+  background: var(--soft);
+  border: 1px solid var(--line);
+}
+
+.admin-property-item strong,
+.admin-property-item span {
+  display: block;
+}
+
+.admin-property-item span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 650;
+}
+
 @media (max-width: 920px) {
   .nav {
     display: none;
@@ -529,7 +567,8 @@ footer {
   }
 
   .admin-layout,
-  .form-row {
+  .form-row,
+  .admin-actions {
     grid-template-columns: 1fr;
   }
 }

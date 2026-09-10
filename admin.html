@@ -85,11 +85,24 @@
             Link de video externo opcional
             <input id="videoUrl" name="videoUrl" placeholder="YouTube, TikTok, Drive publico..." />
           </label>
-          <button type="submit">Guardar y publicar</button>
+          <input id="propertyId" name="id" type="hidden" />
+          <div class="admin-actions">
+            <button type="submit" id="submitButton">Guardar y publicar</button>
+            <button type="button" id="newButton" class="secondary">Nuevo inmueble</button>
+          </div>
           <p id="adminStatus" class="admin-status" role="status"></p>
         </form>
 
         <aside class="admin-help">
+          <h2>Inmuebles guardados</h2>
+          <div class="admin-list-control">
+            <label for="listPin">
+              PIN para cargar lista
+              <input id="listPin" type="password" placeholder="PIN de administracion" />
+            </label>
+            <button type="button" id="loadPropertiesButton" class="secondary">Cargar inmuebles</button>
+          </div>
+          <div id="adminPropertyList" class="admin-property-list"></div>
           <h2>Flujo recomendado</h2>
           <p>
             Recibe las fotos por WhatsApp, descargalas al computador, abre este panel,
