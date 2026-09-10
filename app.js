@@ -86,6 +86,10 @@ function moneyText(property) {
   return `${property.operation} | ${property.price}`;
 }
 
+function propertyShareText(property) {
+  return `Mira este inmueble en Al Reves Inmobiliario: ${property.title} - ${property.price}. ${window.location.origin}`;
+}
+
 function renderProperties() {
   const term = searchInput.value.trim().toLowerCase();
   const operation = operationFilter.value;
@@ -171,6 +175,7 @@ function selectProperty(id) {
   document.querySelector("#detailMap").href = property.mapUrl;
   document.querySelector("#detailVideo").href = property.videoUrl;
   document.querySelector("#detailWhatsapp").href = whatsappUrl(`Hola, quiero informacion sobre: ${property.title} (${property.price})`);
+  document.querySelector("#shareProperty").dataset.shareText = propertyShareText(property);
   document.querySelector("#detalle").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -188,6 +193,29 @@ async function loadProperties() {
   } catch {
     properties = [...fallbackProperties];
   }
+}
+
+function setupShareButton() {
+  document.querySelector("#shareProperty").addEventListener("click", async (event) => {
+    const text = event.currentTarget.dataset.shareText || window.location.href;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Al Reves Inmobiliario",
+          text,
+          url: window.location.origin
+        });
+        trackMetric("whatsapp");
+        return;
+      } catch {
+        return;
+      }
+    }
+
+    window.open(whatsappUrl(text), "_blank", "noopener,noreferrer");
+    trackMetric("whatsapp");
+  });
 }
 
 function setupContactLinks() {
@@ -229,6 +257,7 @@ async function init() {
   renderProperties();
   selectProperty(properties[0]?.id);
   setupContactLinks();
+  setupShareButton();
   setupLeadForm();
 }
 
