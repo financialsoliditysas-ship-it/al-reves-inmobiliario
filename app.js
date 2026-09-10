@@ -1,4 +1,4 @@
-const whatsappNumber = "573001112233";
+const whatsappNumber = "573147637745";
 
 const properties = [
   {
