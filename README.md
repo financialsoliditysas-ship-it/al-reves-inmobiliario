@@ -26,4 +26,3 @@ Abrir `index.html` en el navegador o ejecutar:
 ```bash
 npx serve .
 ```
-
