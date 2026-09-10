@@ -87,7 +87,11 @@ function moneyText(property) {
 }
 
 function propertyShareText(property) {
-  return `Mira este inmueble en Al Reves Inmobiliario: ${property.title} - ${property.price}. ${window.location.origin}`;
+  return `Mira este inmueble en Al Reves Inmobiliario: ${property.title} - ${property.price}.`;
+}
+
+function propertyShareUrl(property) {
+  return `${window.location.origin}/api/share?id=${encodeURIComponent(property.id)}`;
 }
 
 function renderProperties() {
@@ -176,6 +180,7 @@ function selectProperty(id) {
   document.querySelector("#detailVideo").href = property.videoUrl;
   document.querySelector("#detailWhatsapp").href = whatsappUrl(`Hola, quiero informacion sobre: ${property.title} (${property.price})`);
   document.querySelector("#shareProperty").dataset.shareText = propertyShareText(property);
+  document.querySelector("#shareProperty").dataset.shareUrl = propertyShareUrl(property);
   document.querySelector("#detalle").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -198,13 +203,14 @@ async function loadProperties() {
 function setupShareButton() {
   document.querySelector("#shareProperty").addEventListener("click", async (event) => {
     const text = event.currentTarget.dataset.shareText || window.location.href;
+    const url = event.currentTarget.dataset.shareUrl || window.location.href;
 
     if (navigator.share) {
       try {
         await navigator.share({
           title: "Al Reves Inmobiliario",
           text,
-          url: window.location.origin
+          url
         });
         trackMetric("whatsapp");
         return;
@@ -213,7 +219,7 @@ function setupShareButton() {
       }
     }
 
-    window.open(whatsappUrl(text), "_blank", "noopener,noreferrer");
+    window.open(whatsappUrl(`${text} ${url}`), "_blank", "noopener,noreferrer");
     trackMetric("whatsapp");
   });
 }
@@ -253,9 +259,11 @@ typeFilter.addEventListener("change", renderProperties);
 
 async function init() {
   await loadProperties();
+  const requestedPropertyId = new URLSearchParams(window.location.search).get("inmueble");
+  const initialProperty = properties.find((property) => property.id === requestedPropertyId) || properties[0];
   document.querySelector("#heroCount").textContent = properties.length;
   renderProperties();
-  selectProperty(properties[0]?.id);
+  selectProperty(initialProperty?.id);
   setupContactLinks();
   setupShareButton();
   setupLeadForm();
