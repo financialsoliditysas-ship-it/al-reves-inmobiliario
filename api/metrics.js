@@ -1,6 +1,16 @@
 import { readMetrics, requireAdmin, writeMetrics } from "./_storage.js";
 
-const allowedEvents = ["views", "whatsapp", "leads"];
+const allowedEvents = [
+  "views",
+  "whatsapp",
+  "leads",
+  "searches",
+  "property_views",
+  "contact_clicks",
+  "requests_opened",
+  "shares",
+  "owner_publication_requests"
+];
 
 export default async function handler(req, res) {
   try {

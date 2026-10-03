@@ -26,10 +26,17 @@ function setMode(property) {
 
 function fillForm(property) {
   setMode(property);
+  form.elements.reference.value = property.reference || property.id || "";
+  form.elements.status.value = property.status || property.availability || "Disponible";
   form.elements.title.value = property.title || "";
   form.elements.price.value = property.price || "";
+  form.elements.rent.value = property.rent || "";
+  form.elements.adminFee.value = property.adminFee || "";
+  form.elements.otherCharges.value = property.otherCharges || "";
   form.elements.operation.value = property.operation || "Venta";
   form.elements.type.value = property.type || "Casa";
+  form.elements.municipality.value = property.municipality || "";
+  form.elements.neighborhood.value = property.neighborhood || "";
   form.elements.location.value = property.location || "";
   form.elements.mapUrl.value = property.mapUrl || "";
   form.elements.features.value = Array.isArray(property.features) ? property.features.join(", ") : "";
@@ -95,9 +102,12 @@ async function loadMetrics(pin) {
   }
 
   const metrics = result.metrics || {};
-  document.querySelector("#adminViewsMetric").textContent = Number(metrics.views || 0);
-  document.querySelector("#adminWhatsappMetric").textContent = Number(metrics.whatsapp || 0);
-  document.querySelector("#adminLeadsMetric").textContent = Number(metrics.leads || 0);
+  document.querySelector("#adminSearchesMetric").textContent = Number(metrics.searches || 0);
+  document.querySelector("#adminViewsMetric").textContent = Number(metrics.property_views || metrics.views || 0);
+  document.querySelector("#adminContactMetric").textContent = Number(metrics.contact_clicks || metrics.whatsapp || 0);
+  document.querySelector("#adminRequestsMetric").textContent = Number(metrics.requests_opened || metrics.leads || 0);
+  document.querySelector("#adminSharesMetric").textContent = Number(metrics.shares || 0);
+  document.querySelector("#adminOwnersMetric").textContent = Number(metrics.owner_publication_requests || 0);
 }
 
 function splitFeatures(value) {
@@ -146,11 +156,18 @@ form.addEventListener("submit", async (event) => {
 
     const payload = {
       id: propertyIdInput.value,
+      reference: data.get("reference"),
       title: data.get("title"),
       type: data.get("type"),
       operation: data.get("operation"),
+      status: data.get("status"),
       price: data.get("price"),
+      rent: data.get("rent"),
+      adminFee: data.get("adminFee"),
+      otherCharges: data.get("otherCharges"),
       location: data.get("location"),
+      municipality: data.get("municipality"),
+      neighborhood: data.get("neighborhood"),
       mapUrl: data.get("mapUrl"),
       videoUrl: data.get("videoUrl") || firstVideo || existing?.videoUrl || "",
       images: [...(existing?.images || []), ...(imageUrls.length ? imageUrls : mediaUrls)],

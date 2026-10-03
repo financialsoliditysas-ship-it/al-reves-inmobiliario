@@ -27,10 +27,31 @@ export default async function handler(req, res) {
 
   const allProperties = properties.length ? properties : fallbackProperties;
   const property = allProperties.find((item) => item.id === id) || allProperties[0];
+
+  if (!property) {
+    const homeUrl = absoluteUrl(req, "/");
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+    return res.status(404).send(`<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inmueble no disponible | Al Revés Inmobiliaria</title>
+    <meta name="robots" content="noindex">
+    <meta http-equiv="refresh" content="0;url=${escapeHtml(homeUrl)}">
+  </head>
+  <body>
+    <p>Inmueble no disponible. Abriendo catálogo...</p>
+    <script>window.location.replace(${JSON.stringify(homeUrl)});</script>
+  </body>
+</html>`);
+  }
+
   const pageUrl = absoluteUrl(req, `/?inmueble=${encodeURIComponent(property.id)}`);
   const shareUrl = absoluteUrl(req, `/api/share?id=${encodeURIComponent(property.id)}`);
   const image = property.images?.[0] || "";
-  const title = `${property.title} | ${property.price}`;
+  const title = `${property.title} | ${property.price || property.rent || "Precio por consultar"}`;
   const description = `${property.operation} en ${property.location}. ${property.description}`;
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -43,7 +64,7 @@ export default async function handler(req, res) {
     <title>${escapeHtml(title)}</title>
     <meta name="description" content="${escapeHtml(description)}">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Al Reves Inmobiliario">
+    <meta property="og:site_name" content="Al Revés Inmobiliaria">
     <meta property="og:title" content="${escapeHtml(title)}">
     <meta property="og:description" content="${escapeHtml(description)}">
     <meta property="og:image" content="${escapeHtml(image)}">

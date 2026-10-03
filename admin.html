@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin | Al Reves Inmobiliario</title>
+    <title>Admin | Al Revés Inmobiliaria</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -20,10 +20,10 @@
 
     <main class="admin-main">
       <section class="admin-intro">
-        <p class="eyebrow">Backend operativo</p>
+          <p class="eyebrow">Administración privada</p>
         <h1>Subir inmueble nuevo</h1>
         <p class="muted">
-          Carga la informacion, selecciona fotos o video, guarda y el inmueble queda publicado en la pagina.
+          Carga la información real del inmueble, selecciona fotos o video y guarda los cambios en la plataforma.
         </p>
       </section>
 
@@ -34,8 +34,23 @@
             <input id="adminPin" name="pin" type="password" required placeholder="PIN de administracion" />
           </label>
           <div class="form-row">
+            <label for="reference">
+              Referencia
+              <input id="reference" name="reference" placeholder="Ej. AR-001" />
+            </label>
+            <label for="status">
+              Disponibilidad
+              <select id="status" name="status" required>
+                <option value="Disponible">Disponible</option>
+                <option value="Reservado">Reservado</option>
+                <option value="Vendido">Vendido</option>
+                <option value="Arrendado">Arrendado</option>
+              </select>
+            </label>
+          </div>
+          <div class="form-row">
             <label for="title">
-              Titulo
+              Título
               <input id="title" name="title" required placeholder="Casa en venta barrio..." />
             </label>
             <label for="price">
@@ -45,7 +60,7 @@
           </div>
           <div class="form-row">
             <label for="operation">
-              Operacion
+              Operación
               <select id="operation" name="operation" required>
                 <option value="Venta">Venta</option>
                 <option value="Arriendo">Arriendo</option>
@@ -57,12 +72,39 @@
                 <option value="Casa">Casa</option>
                 <option value="Apartamento">Apartamento</option>
                 <option value="Local">Local</option>
-                <option value="Habitacion">Habitacion</option>
+                <option value="Habitación">Habitación</option>
+                <option value="Lote">Lote</option>
+                <option value="Finca">Finca</option>
+                <option value="Otro">Otro</option>
               </select>
             </label>
           </div>
+          <div class="form-row">
+            <label for="rent">
+              Canon mensual si aplica
+              <input id="rent" name="rent" placeholder="$900.000" />
+            </label>
+            <label for="adminFee">
+              Administración si aplica
+              <input id="adminFee" name="adminFee" placeholder="$0 o por consultar" />
+            </label>
+          </div>
+          <label for="otherCharges">
+            Otros cargos si aplica
+            <input id="otherCharges" name="otherCharges" placeholder="Servicios, depósito u otros cargos informados" />
+          </label>
+          <div class="form-row">
+            <label for="municipality">
+              Municipio
+              <input id="municipality" name="municipality" required placeholder="Nechí, Caucasia, El Bagre..." />
+            </label>
+            <label for="neighborhood">
+              Barrio o sector
+              <input id="neighborhood" name="neighborhood" placeholder="Barrio o sector" />
+            </label>
+          </div>
           <label for="location">
-            Ubicacion visible
+            Ubicación visible
             <input id="location" name="location" required placeholder="Barrio, municipio" />
           </label>
           <label for="mapUrl">
@@ -70,11 +112,11 @@
             <input id="mapUrl" name="mapUrl" required placeholder="https://www.google.com/maps/..." />
           </label>
           <label for="features">
-            Caracteristicas
-            <input id="features" name="features" placeholder="3 habitaciones, 2 banos, patio" />
+            Características documentadas
+            <input id="features" name="features" placeholder="3 habitaciones, 2 baños, patio" />
           </label>
           <label for="description">
-            Descripcion
+            Descripción
             <textarea id="description" name="description" rows="5" required placeholder="Describe la casa, condiciones, barrio y ventajas"></textarea>
           </label>
           <label for="media">
@@ -94,18 +136,21 @@
         </form>
 
         <aside class="admin-help">
-          <h2>Metricas privadas</h2>
+          <h2>Métricas privadas</h2>
           <div class="admin-list-control">
             <label for="metricsPin">
-              PIN para ver metricas
+              PIN para ver métricas
               <input id="metricsPin" type="password" placeholder="PIN de administracion" />
             </label>
-            <button type="button" id="loadMetricsButton" class="secondary">Ver metricas</button>
+            <button type="button" id="loadMetricsButton" class="secondary">Ver métricas</button>
           </div>
           <div class="metric-cards admin-metrics">
-            <article><strong id="adminViewsMetric">0</strong><span>vistas de fichas</span></article>
-            <article><strong id="adminWhatsappMetric">0</strong><span>clics a WhatsApp</span></article>
-            <article><strong id="adminLeadsMetric">0</strong><span>leads enviados</span></article>
+            <article><strong id="adminSearchesMetric">0</strong><span>búsquedas realizadas</span></article>
+            <article><strong id="adminViewsMetric">0</strong><span>visualizaciones de fichas</span></article>
+            <article><strong id="adminContactMetric">0</strong><span>clics de contacto</span></article>
+            <article><strong id="adminRequestsMetric">0</strong><span>solicitudes abiertas en WhatsApp</span></article>
+            <article><strong id="adminSharesMetric">0</strong><span>veces compartido</span></article>
+            <article><strong id="adminOwnersMetric">0</strong><span>solicitudes de propietarios</span></article>
           </div>
           <h2>Inmuebles guardados</h2>
           <div class="admin-list-control">
@@ -118,8 +163,8 @@
           <div id="adminPropertyList" class="admin-property-list"></div>
           <h2>Flujo recomendado</h2>
           <p>
-            Recibe las fotos por WhatsApp, descargalas al computador, abre este panel,
-            llena la ficha, sube las imagenes y publica. Para el mapa, abre Google Maps,
+            Recibe las fotos por WhatsApp, descárgalas al computador, abre este panel,
+            llena la ficha, sube las imágenes y publica. Para el mapa, abre Google Maps,
             busca el barrio o punto aproximado y pega el enlace.
           </p>
           <p>

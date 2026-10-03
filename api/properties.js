@@ -24,11 +24,18 @@ export default async function handler(req, res) {
 
     const property = {
       id: slug,
+      reference: body.reference || slug,
       title: body.title,
       type: body.type,
       operation: body.operation,
+      status: body.status || "Disponible",
       price: body.price,
+      rent: body.rent || "",
+      adminFee: body.adminFee || "",
+      otherCharges: body.otherCharges || "",
       location: body.location,
+      municipality: body.municipality || "",
+      neighborhood: body.neighborhood || "",
       mapUrl: body.mapUrl,
       videoUrl: body.videoUrl || "",
       images: Array.isArray(body.images) ? body.images.filter(Boolean) : [],

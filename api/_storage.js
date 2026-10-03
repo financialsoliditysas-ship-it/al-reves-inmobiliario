@@ -32,7 +32,17 @@ export async function readMetrics() {
   const blob = blobs.find((item) => item.pathname === metricsPath);
 
   if (!blob) {
-    return { views: 0, whatsapp: 0, leads: 0 };
+    return {
+      views: 0,
+      whatsapp: 0,
+      leads: 0,
+      searches: 0,
+      property_views: 0,
+      contact_clicks: 0,
+      requests_opened: 0,
+      shares: 0,
+      owner_publication_requests: 0
+    };
   }
 
   const response = await fetch(blob.url, { cache: "no-store" });

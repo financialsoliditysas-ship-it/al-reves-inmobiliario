@@ -3,150 +3,223 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Al Reves Inmobiliario | Arriendos y ventas en Nechí</title>
+    <title>Al Revés Inmobiliaria | Venta y arriendo en el Bajo Cauca</title>
     <meta
       name="description"
-      content="Casas, apartamentos, habitaciones y locales en venta o arriendo en Nechí. Fotos, videos, ubicacion y contacto directo."
+      content="Catálogo inmobiliario para venta y arriendo en el Bajo Cauca. Consulta propiedades reales, revisa fotos, ubicación y contacto directo."
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header class="topbar">
-      <a class="brand" href="#inicio" aria-label="Inicio Al Reves Inmobiliario">
+    <header class="site-header">
+      <a class="brand" href="#inicio" aria-label="Ir al inicio">
         <span class="brand-mark">AR</span>
         <span>
-          <strong>Al Reves Inmobiliario</strong>
-          <small>Ventas y arriendos Nechí</small>
+          <strong>Al Revés Inmobiliaria</strong>
+          <small>Venta y arriendo en el Bajo Cauca</small>
         </span>
       </a>
-      <nav class="nav">
-        <a href="#inmuebles">Inmuebles</a>
-        <a href="#publicar">Publicar</a>
-        <a href="#lead">Contacto</a>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a href="#catalogo" data-operation-link="Venta">Comprar</a>
+        <a href="#catalogo" data-operation-link="Arriendo">Arrendar</a>
+        <a href="#propietarios">Publicar inmueble</a>
+        <a href="#contacto">Contacto</a>
       </nav>
-      <a class="top-action" href="#publicar">Publicar inmueble</a>
+      <a class="header-action" href="#propietarios">Publicar</a>
     </header>
 
     <main id="inicio">
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Plataforma local inmobiliaria</p>
-          <h1>Encuentra o publica inmuebles en Nechí sin enredarte.</h1>
+          <p class="eyebrow">Catálogo inmobiliario local</p>
+          <h1>Busca, compara y consulta inmuebles reales en el Bajo Cauca.</h1>
           <p>
-            Casas, apartamentos y locales con fotos, video, ubicacion y contacto directo.
-            Una forma simple de vender, arrendar y encontrar opciones reales en Nechí.
+            Venta y arriendo con fotos, ubicación, condiciones disponibles y contacto directo.
+            El catálogo muestra únicamente inmuebles cargados en la plataforma.
           </p>
-          <div class="hero-actions">
-            <a class="primary" href="#inmuebles">Ver inmuebles</a>
-            <a class="secondary" href="#lead">Quiero que me llamen</a>
-          </div>
         </div>
-        <div class="hero-panel">
-          <img
-            src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1400&q=80"
-            alt="Casa familiar con fachada moderna"
-          />
-          <div class="hero-badge">
-            <strong id="heroCount">0</strong>
-            <span>inmuebles activos</span>
-          </div>
-        </div>
-      </section>
 
-      <section class="search-band" id="inmuebles">
-        <div>
-          <p class="eyebrow">Busqueda rapida</p>
-          <h2>Inmuebles disponibles</h2>
-        </div>
-        <div class="filters" role="search">
-          <input id="searchInput" type="search" placeholder="Buscar por barrio, tipo o palabra clave" />
-          <select id="operationFilter" aria-label="Operacion">
-            <option value="todos">Venta y arriendo</option>
-            <option value="Arriendo">Arriendo</option>
-            <option value="Venta">Venta</option>
-          </select>
-          <select id="typeFilter" aria-label="Tipo de inmueble">
-            <option value="todos">Todos los tipos</option>
-            <option value="Casa">Casa</option>
-            <option value="Apartamento">Apartamento</option>
-            <option value="Local">Local</option>
-            <option value="Habitacion">Habitacion</option>
-          </select>
-        </div>
-      </section>
-
-      <section class="content-grid">
-        <div class="property-list" id="propertyList" aria-live="polite"></div>
-        <aside class="lead-panel" id="lead">
-          <p class="eyebrow">Captacion de leads</p>
-          <h2>Deja tus datos</h2>
-          <p class="muted">Te llamamos para agendar visita, enviar opciones o publicar tu inmueble.</p>
-          <form id="leadForm">
-            <label for="leadName">
-              Nombre
-              <input id="leadName" name="name" required placeholder="Tu nombre" />
-            </label>
-            <label for="leadPhone">
-              Celular
-              <input id="leadPhone" name="phone" required placeholder="300 000 0000" />
-            </label>
-            <label for="leadInterest">
-              Interes
-              <select id="leadInterest" name="interest" required>
-                <option value="Busco arriendo">Busco arriendo</option>
-                <option value="Busco comprar">Busco comprar</option>
-                <option value="Quiero publicar">Quiero publicar</option>
+        <form class="search-card" id="searchForm" role="search">
+          <div class="search-head">
+            <div>
+              <p class="eyebrow">Búsqueda</p>
+              <h2>Encuentra una opción</h2>
+            </div>
+            <button type="button" class="text-button" id="clearFiltersTop">Limpiar</button>
+          </div>
+          <div class="filter-grid primary-filters">
+            <label for="operationFilter">
+              Operación
+              <select id="operationFilter" name="operation">
+                <option value="todos">Comprar o arrendar</option>
+                <option value="Venta">Comprar</option>
+                <option value="Arriendo">Arrendar</option>
               </select>
             </label>
-            <label for="leadMessage">
-              Mensaje
-              <textarea id="leadMessage" name="message" rows="4" placeholder="Barrio, presupuesto o datos del inmueble"></textarea>
+            <label for="municipalityFilter">
+              Municipio
+              <select id="municipalityFilter" name="municipality">
+                <option value="todos">Todos los municipios</option>
+              </select>
             </label>
-            <button type="submit">Enviar por WhatsApp</button>
-          </form>
-        </aside>
+          </div>
+          <details class="more-filters" id="moreFilters">
+            <summary>Más filtros</summary>
+            <div class="filter-grid">
+              <label for="typeFilter">
+                Tipo de inmueble
+                <select id="typeFilter" name="type">
+                  <option value="todos">Todos los tipos</option>
+                  <option value="Casa">Casa</option>
+                  <option value="Apartamento">Apartamento</option>
+                  <option value="Local">Local</option>
+                  <option value="Habitación">Habitación</option>
+                  <option value="Lote">Lote</option>
+                  <option value="Finca">Finca</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </label>
+              <label for="budgetFilter">
+                Presupuesto máximo
+                <input id="budgetFilter" name="budget" inputmode="numeric" placeholder="Ej. 900000 o 180000000" />
+              </label>
+              <label for="searchInput" class="wide-field">
+                Palabra clave
+                <input id="searchInput" name="q" type="search" placeholder="Barrio, referencia o característica" />
+              </label>
+            </div>
+          </details>
+          <p class="form-note">Puedes consultar el catálogo sin registrarte.</p>
+        </form>
       </section>
 
-      <section class="detail-section" id="detalle">
-        <div class="detail-shell">
-          <div class="gallery">
+      <section class="catalog-section" id="catalogo">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Inventario publicado</p>
+            <h2>Inmuebles disponibles en plataforma</h2>
+          </div>
+          <p class="muted" id="resultSummary">Cargando inmuebles...</p>
+        </div>
+        <div class="active-filters" id="activeFilters" aria-live="polite"></div>
+        <div class="catalog-layout">
+          <div class="property-list" id="propertyList" aria-live="polite"></div>
+          <aside class="help-panel" id="contacto">
+            <p class="eyebrow">Acompañamiento</p>
+            <h2>Cuéntanos qué buscas</h2>
+            <p class="muted">
+              Usaremos estos datos únicamente para preparar el mensaje de WhatsApp y ayudarte con opciones o información del inmueble.
+            </p>
+            <form id="buyerForm">
+              <label for="buyerName">
+                Nombre
+                <input id="buyerName" name="name" required placeholder="Tu nombre" />
+              </label>
+              <label for="buyerPhone">
+                Celular
+                <input id="buyerPhone" name="phone" required placeholder="300 000 0000" />
+              </label>
+              <label for="buyerInterest">
+                ¿Qué necesitas?
+                <select id="buyerInterest" name="interest" required>
+                  <option value="Busco comprar">Busco comprar</option>
+                  <option value="Busco arrendar">Busco arrendar</option>
+                  <option value="Quiero información de un inmueble">Quiero información de un inmueble</option>
+                </select>
+              </label>
+              <label for="buyerMessage">
+                Detalle
+                <textarea id="buyerMessage" name="message" rows="4" placeholder="Municipio, presupuesto, barrio o tipo de inmueble"></textarea>
+              </label>
+              <button type="submit">Preparar mensaje por WhatsApp</button>
+              <p class="form-note">Al hacer clic se abrirá WhatsApp. Debes enviar el mensaje allí para que llegue la solicitud.</p>
+            </form>
+          </aside>
+        </div>
+      </section>
+
+      <section class="detail-section" id="inmueble" hidden>
+        <div class="detail-toolbar">
+          <button type="button" class="secondary" id="backToResults">Volver a resultados</button>
+          <span class="muted" id="detailReference"></span>
+        </div>
+        <article class="property-detail">
+          <div class="gallery" aria-label="Galería del inmueble">
             <img id="mainImage" alt="Foto principal del inmueble seleccionado" />
             <div class="thumbs" id="thumbs"></div>
           </div>
           <div class="detail-copy">
-            <span class="pill" id="detailOperation"></span>
+            <div class="status-row">
+              <span class="pill" id="detailOperation"></span>
+              <span class="availability" id="detailStatus"></span>
+            </div>
             <h2 id="detailTitle"></h2>
             <p class="price" id="detailPrice"></p>
-            <p class="muted" id="detailLocation"></p>
+            <div class="price-breakdown" id="priceBreakdown"></div>
+            <dl class="structured-data" id="structuredData"></dl>
             <p id="detailDescription"></p>
+            <div class="notice" id="propertyNotice" hidden></div>
             <div class="features" id="detailFeatures"></div>
             <div class="detail-actions">
-              <a class="primary" id="detailWhatsapp" target="_blank" rel="noreferrer">Contactar</a>
+              <a class="primary" id="detailWhatsapp" target="_blank" rel="noreferrer">Solicitar visita</a>
+              <a class="secondary" id="questionWhatsapp" target="_blank" rel="noreferrer">Hacer una pregunta</a>
+              <button type="button" class="secondary" id="saveProperty">Guardar</button>
               <button type="button" class="secondary" id="shareProperty">Compartir</button>
               <a class="secondary" id="detailVideo" target="_blank" rel="noreferrer">Ver video</a>
               <a class="secondary" id="detailMap" target="_blank" rel="noreferrer">Google Maps</a>
             </div>
+            <p class="form-note">Enviar el mensaje por WhatsApp crea una solicitud. No equivale a una visita confirmada.</p>
           </div>
-        </div>
+        </article>
       </section>
 
-      <section class="publish" id="publicar">
+      <section class="owner-section" id="propietarios">
         <div>
           <p class="eyebrow">Para propietarios</p>
-          <h2>Publicamos tu inmueble y filtramos interesados.</h2>
+          <h2>Solicita la publicación de tu inmueble</h2>
           <p>
-            El flujo inicial es simple: recibimos fotos, video, barrio, canon o precio,
-            condiciones y datos de contacto. Se publica, se mide el interes y se agenda visita.
+            Recibimos la información básica, fotos, ubicación aproximada y condiciones disponibles para preparar una ficha clara.
+            La publicación se hace con la información que entregues y pueda cargarse en la plataforma.
           </p>
         </div>
-        <a class="primary" id="publishWhatsapp" href="#" target="_blank" rel="noreferrer">Publicar mi inmueble</a>
+        <form id="ownerForm" class="owner-form">
+          <label for="ownerName">
+            Nombre
+            <input id="ownerName" name="name" required placeholder="Tu nombre" />
+          </label>
+          <label for="ownerPhone">
+            Celular
+            <input id="ownerPhone" name="phone" required placeholder="300 000 0000" />
+          </label>
+          <label for="ownerOperation">
+            Operación
+            <select id="ownerOperation" name="operation" required>
+              <option value="Venta">Venta</option>
+              <option value="Arriendo">Arriendo</option>
+            </select>
+          </label>
+          <label for="ownerMessage">
+            Datos del inmueble
+            <textarea id="ownerMessage" name="message" rows="4" placeholder="Tipo, municipio, barrio, precio/canon y si tienes fotos o video"></textarea>
+          </label>
+          <button type="submit">Preparar solicitud por WhatsApp</button>
+          <p class="form-note">Al hacer clic se abrirá WhatsApp. Debes enviar allí el mensaje y adjuntar fotos o videos si aplica.</p>
+        </form>
       </section>
     </main>
 
-    <footer>
-      <span>Al Reves Inmobiliario - MVP comercial</span>
-      <span>Nechí, Antioquia</span>
+    <footer class="site-footer">
+      <span>Al Revés Inmobiliaria</span>
+      <span>Venta y arriendo en el Bajo Cauca</span>
     </footer>
+
+    <nav class="mobile-contact-bar" id="mobileContactBar" aria-label="Acciones del inmueble" hidden>
+      <a id="mobileVisitAction" class="primary" target="_blank" rel="noreferrer">Solicitar visita</a>
+      <button type="button" id="mobileShareAction" class="secondary">Compartir</button>
+    </nav>
 
     <script src="app.js"></script>
   </body>
