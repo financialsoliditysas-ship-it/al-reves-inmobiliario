@@ -9,6 +9,10 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;");
 }
 
+function publicText(value) {
+  return String(value || "").replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, "").replace(/\s{2,}/g, " ").trim();
+}
+
 function absoluteUrl(req, path) {
   const host = req.headers["x-forwarded-host"] || req.headers.host;
   const protocol = req.headers["x-forwarded-proto"] || "https";
@@ -51,8 +55,8 @@ export default async function handler(req, res) {
   const pageUrl = absoluteUrl(req, `/?inmueble=${encodeURIComponent(property.id)}`);
   const shareUrl = absoluteUrl(req, `/api/share?id=${encodeURIComponent(property.id)}`);
   const image = property.images?.[0] || "";
-  const title = `${property.title} | ${property.price || property.rent || "Precio por consultar"}`;
-  const description = `${property.operation} en ${property.location}. ${property.description}`;
+  const title = `${publicText(property.title)} | ${property.price || property.rent || "Precio por consultar"}`;
+  const description = publicText(`${property.operation} en ${property.location}. ${property.description}`);
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");

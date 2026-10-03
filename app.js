@@ -43,6 +43,10 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;");
 }
 
+function publicText(value) {
+  return String(value || "").replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, "").replace(/\s{2,}/g, " ").trim();
+}
+
 function trackMetric(event) {
   fetch("/api/metrics", {
     method: "POST",
@@ -113,7 +117,7 @@ function contactText(property, intent = "visita") {
   return [
     `Hola, quiero ${action} este inmueble de Al Revés Inmobiliaria.`,
     `Referencia: ${property.reference || property.id}`,
-    `Inmueble: ${property.title}`,
+    `Inmueble: ${publicText(property.title)}`,
     `Operación: ${property.operation}`,
     `Precio/canon: ${priceLabel(property)}`,
     `URL: ${shareUrl(property)}`
@@ -223,17 +227,17 @@ function renderProperties() {
       const status = availabilityOf(property);
       const neighborhood = neighborhoodOf(property);
       const municipality = municipalityOf(property);
-      const featureText = (property.features || []).slice(0, 3).join(" · ");
+      const featureText = (property.features || []).slice(0, 3).map(publicText).join(" · ");
       const image = property.images?.[0] || "";
       return `
         <article class="property-card" data-id="${escapeHtml(property.id)}" tabindex="0">
-          <img src="${escapeHtml(image)}" alt="${escapeHtml(property.title)}" loading="lazy">
+          <img src="${escapeHtml(image)}" alt="${escapeHtml(publicText(property.title))}" loading="lazy">
           <div class="property-body">
             <div class="card-top">
               <span class="pill">${escapeHtml(property.operation || "Operación")}</span>
               <span class="availability">${escapeHtml(status)}</span>
             </div>
-            <h3>${escapeHtml(property.title)}</h3>
+            <h3>${escapeHtml(publicText(property.title))}</h3>
             <p class="price">${escapeHtml(formatCop(priceLabel(property)))}</p>
             <p class="muted">${escapeHtml(property.type || "Tipo por consultar")} · ${escapeHtml(neighborhood)} · ${escapeHtml(municipality)}</p>
             ${featureText ? `<p class="feature-line">${escapeHtml(featureText)}</p>` : ""}
@@ -307,11 +311,11 @@ function selectProperty(id, fromUser = false) {
   document.querySelector("#detailReference").textContent = `Referencia: ${property.reference || property.id}`;
   document.querySelector("#detailOperation").textContent = property.operation || "Operación";
   document.querySelector("#detailStatus").textContent = availabilityOf(property);
-  document.querySelector("#detailTitle").textContent = property.title || "Inmueble";
+  document.querySelector("#detailTitle").textContent = publicText(property.title) || "Inmueble";
   document.querySelector("#detailPrice").textContent = formatCop(priceLabel(property));
-  document.querySelector("#detailDescription").textContent = property.description || "Descripción por completar.";
+  document.querySelector("#detailDescription").textContent = publicText(property.description) || "Descripción por completar.";
   document.querySelector("#mainImage").src = property.images?.[0] || "";
-  document.querySelector("#mainImage").alt = `Foto principal de ${property.title}`;
+  document.querySelector("#mainImage").alt = `Foto principal de ${publicText(property.title)}`;
 
   renderPriceBreakdown(property);
   renderStructuredData(property);
@@ -322,7 +326,7 @@ function selectProperty(id, fromUser = false) {
     .map(
       (image, index) => `
         <button type="button" class="${index === 0 ? "active" : ""}" data-image="${escapeHtml(image)}" aria-label="Ver foto ${index + 1}">
-          <img src="${escapeHtml(image)}" alt="Foto ${index + 1} de ${escapeHtml(property.title)}" loading="lazy">
+          <img src="${escapeHtml(image)}" alt="Foto ${index + 1} de ${escapeHtml(publicText(property.title))}" loading="lazy">
         </button>
       `
     )
@@ -336,14 +340,14 @@ function selectProperty(id, fromUser = false) {
     });
   });
 
-  document.querySelector("#detailFeatures").innerHTML = (property.features || []).map((feature) => `<span>${escapeHtml(feature)}</span>`).join("");
+  document.querySelector("#detailFeatures").innerHTML = (property.features || []).map((feature) => `<span>${escapeHtml(publicText(feature))}</span>`).join("");
   document.querySelector("#detailMap").href = property.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(property.location || municipalityOf(property))}`;
   document.querySelector("#detailVideo").href = property.videoUrl || "#";
   document.querySelector("#detailVideo").hidden = !property.videoUrl;
   document.querySelector("#detailWhatsapp").textContent = property.operation === "Arriendo" ? "Consultar disponibilidad" : "Solicitar visita";
   document.querySelector("#detailWhatsapp").href = whatsappUrl(contactText(property, "visita"));
   document.querySelector("#questionWhatsapp").href = whatsappUrl(contactText(property, "pregunta"));
-  document.querySelector("#shareProperty").dataset.shareText = `${property.title} - ${formatCop(priceLabel(property))}`;
+  document.querySelector("#shareProperty").dataset.shareText = `${publicText(property.title)} - ${formatCop(priceLabel(property))}`;
   document.querySelector("#shareProperty").dataset.shareUrl = shareUrl(property);
   document.querySelector("#mobileVisitAction").href = whatsappUrl(contactText(property, "visita"));
   document.querySelector("#mobileVisitAction").textContent = property.operation === "Arriendo" ? "Consultar" : "Visita";
