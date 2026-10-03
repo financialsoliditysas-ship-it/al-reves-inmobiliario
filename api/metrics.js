@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
       if (!requireAdmin(req)) {
-        return res.status(401).json({ error: "Unauthorized" });
+        return res.status(401).json({ error: "PIN_INVALIDO" });
       }
 
       const metrics = await readMetrics();

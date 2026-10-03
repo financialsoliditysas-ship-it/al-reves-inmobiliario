@@ -11,6 +11,7 @@ const adminPropertyList = document.querySelector("#adminPropertyList");
 const metricsPin = document.querySelector("#metricsPin");
 const loadMetricsButton = document.querySelector("#loadMetricsButton");
 let loadedProperties = [];
+let cachedAdminPin = "";
 
 function setStatus(message, isError = false) {
   statusEl.textContent = message;
@@ -26,6 +27,9 @@ function setMode(property) {
 
 function fillForm(property) {
   setMode(property);
+  if (!form.elements.pin.value && cachedAdminPin) {
+    form.elements.pin.value = cachedAdminPin;
+  }
   form.elements.reference.value = property.reference || property.id || "";
   form.elements.status.value = property.status || property.availability || "Disponible";
   form.elements.title.value = property.title || "";
@@ -44,6 +48,28 @@ function fillForm(property) {
   form.elements.videoUrl.value = property.videoUrl || "";
   setStatus(`Editando: ${property.title}`);
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function rememberPin(pin) {
+  cachedAdminPin = String(pin || "").trim();
+  if (cachedAdminPin) {
+    form.elements.pin.value = cachedAdminPin;
+    listPin.value = cachedAdminPin;
+    metricsPin.value = metricsPin.value || cachedAdminPin;
+  }
+  return cachedAdminPin;
+}
+
+function currentPin(data) {
+  return rememberPin(data?.get("pin") || form.elements.pin.value || listPin.value || metricsPin.value);
+}
+
+function friendlyError(error) {
+  const message = error?.message || "";
+  if (message === "Unauthorized" || message === "PIN_INVALIDO") {
+    return "PIN inválido o vacío. Usa el mismo PIN privado con el que cargaste la lista e intenta de nuevo.";
+  }
+  return message || "Error procesando la solicitud";
 }
 
 function renderPropertyList() {
@@ -138,9 +164,14 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const data = new FormData(form);
-  const pin = data.get("pin");
+  const pin = currentPin(data);
   const files = Array.from(data.getAll("media")).filter((file) => file.size > 0);
   const isEditing = Boolean(propertyIdInput.value);
+
+  if (!pin) {
+    setStatus("Escribe el PIN privado antes de guardar o actualizar.", true);
+    return;
+  }
 
   if (!isEditing && files.length === 0) {
     setStatus("Debes cargar al menos una foto.", true);
@@ -195,28 +226,37 @@ form.addEventListener("submit", async (event) => {
     await loadSavedProperties(pin);
     setStatus(`${isEditing ? "Actualizado" : "Publicado"}: ${result.property.title}`);
   } catch (error) {
-    setStatus(error.message || "Error publicando el inmueble", true);
+    setStatus(friendlyError(error), true);
   }
 });
 
 loadPropertiesButton.addEventListener("click", async () => {
   try {
+    const pin = rememberPin(listPin.value);
+    if (!pin) {
+      setStatus("Escribe el PIN privado para cargar los inmuebles.", true);
+      return;
+    }
     setStatus("Cargando inmuebles...");
-    await loadSavedProperties(listPin.value);
-    form.elements.pin.value = listPin.value;
+    await loadSavedProperties(pin);
     setStatus("Lista cargada.");
   } catch (error) {
-    setStatus(error.message || "No se pudo cargar la lista", true);
+    setStatus(friendlyError(error), true);
   }
 });
 
 loadMetricsButton.addEventListener("click", async () => {
   try {
+    const pin = rememberPin(metricsPin.value);
+    if (!pin) {
+      setStatus("Escribe el PIN privado para ver las métricas.", true);
+      return;
+    }
     setStatus("Cargando metricas...");
-    await loadMetrics(metricsPin.value);
+    await loadMetrics(pin);
     setStatus("Metricas actualizadas.");
   } catch (error) {
-    setStatus(error.message || "No se pudieron cargar las metricas", true);
+    setStatus(friendlyError(error), true);
   }
 });
 
