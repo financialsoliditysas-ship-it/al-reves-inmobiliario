@@ -3,7 +3,12 @@ import { makeSlug, readProperties, requireAdmin, writeProperties } from "./_stor
 export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
-      const properties = await readProperties();
+      let properties = [];
+      try {
+        properties = await readProperties();
+      } catch {
+        properties = [];
+      }
       return res.status(200).json({ properties });
     }
 

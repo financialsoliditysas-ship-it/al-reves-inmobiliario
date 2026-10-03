@@ -33,11 +33,16 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Invalid metric event" });
     }
 
-    const metrics = await readMetrics();
-    metrics[body.event] = Number(metrics[body.event] || 0) + 1;
-    await writeMetrics(metrics);
+    let metrics = {};
+    try {
+      metrics = await readMetrics();
+      metrics[body.event] = Number(metrics[body.event] || 0) + 1;
+      await writeMetrics(metrics);
+    } catch {
+      return res.status(200).json({ ok: true, stored: false });
+    }
 
-    return res.status(200).json({ ok: true });
+    return res.status(200).json({ ok: true, stored: true });
   } catch (error) {
     return res.status(500).json({ error: error.message || "Unexpected error" });
   }
