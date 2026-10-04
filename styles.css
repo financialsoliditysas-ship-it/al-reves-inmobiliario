@@ -571,12 +571,23 @@ form {
 .site-footer,
 footer {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 18px;
   padding: 24px clamp(18px, 4vw, 54px);
   border-top: 1px solid var(--line);
   color: var(--muted);
   background: var(--white);
+}
+
+.footer-admin-link {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.footer-admin-link:hover {
+  color: var(--green);
 }
 
 .mobile-contact-bar {
@@ -647,6 +658,29 @@ footer {
 .admin-help h2 {
   margin: 10px 0 0;
   font-size: 24px;
+}
+
+.internal-links {
+  display: grid;
+  gap: 8px;
+}
+
+.internal-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--warm-white);
+  color: var(--green);
+  font-weight: 800;
+}
+
+.internal-links a:hover {
+  border-color: var(--green);
+  background: var(--white);
 }
 
 .metric-cards,
