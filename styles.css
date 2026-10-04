@@ -85,15 +85,24 @@ summary:focus-visible,
   min-width: 260px;
 }
 
-.brand-mark {
+.brand-mark,
+.brand-logo {
   display: grid;
-  width: 44px;
+  width: 132px;
   height: 44px;
   place-items: center;
+  overflow: hidden;
   border-radius: 14px;
   background: var(--green);
   color: var(--white);
   font-weight: 800;
+}
+
+.brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
 }
 
 .brand span:last-child {
