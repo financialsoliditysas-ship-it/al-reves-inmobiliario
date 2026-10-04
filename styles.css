@@ -389,6 +389,18 @@ label {
   background: var(--sand);
 }
 
+.image-placeholder {
+  display: grid;
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  place-items: center;
+  padding: 18px;
+  background: linear-gradient(135deg, rgba(20, 92, 67, 0.12), rgba(233, 226, 213, 0.8));
+  color: var(--green);
+  font-weight: 700;
+  text-align: center;
+}
+
 .property-body {
   display: grid;
   gap: 10px;
@@ -464,6 +476,11 @@ form {
   border-radius: 14px;
   object-fit: cover;
   background: var(--sand);
+}
+
+.gallery-placeholder {
+  border: 1px dashed rgba(32, 43, 38, 0.28);
+  border-radius: 14px;
 }
 
 .thumbs {

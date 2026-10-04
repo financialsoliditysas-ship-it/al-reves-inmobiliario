@@ -47,6 +47,18 @@ function publicText(value) {
   return String(value || "").replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, "").replace(/\s{2,}/g, " ").trim();
 }
 
+function imageMarkup(src, alt, className = "") {
+  if (src) {
+    return `<img${className ? ` class="${className}"` : ""} src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy">`;
+  }
+
+  return `
+    <div class="image-placeholder${className ? ` ${className}` : ""}" role="img" aria-label="${escapeHtml(alt)}">
+      <span>Foto pendiente</span>
+    </div>
+  `;
+}
+
 function trackMetric(event) {
   fetch("/api/metrics", {
     method: "POST",
@@ -231,7 +243,7 @@ function renderProperties() {
       const image = property.images?.[0] || "";
       return `
         <article class="property-card" data-id="${escapeHtml(property.id)}" tabindex="0">
-          <img src="${escapeHtml(image)}" alt="${escapeHtml(publicText(property.title))}" loading="lazy">
+          ${imageMarkup(image, publicText(property.title))}
           <div class="property-body">
             <div class="card-top">
               <span class="pill">${escapeHtml(property.operation || "Operación")}</span>
@@ -314,27 +326,34 @@ function selectProperty(id, fromUser = false) {
   document.querySelector("#detailTitle").textContent = publicText(property.title) || "Inmueble";
   document.querySelector("#detailPrice").textContent = formatCop(priceLabel(property));
   document.querySelector("#detailDescription").textContent = publicText(property.description) || "Descripción por completar.";
-  document.querySelector("#mainImage").src = property.images?.[0] || "";
-  document.querySelector("#mainImage").alt = `Foto principal de ${publicText(property.title)}`;
+  const mainImage = document.querySelector("#mainImage");
+  const firstImage = property.images?.[0] || "";
+  mainImage.src = firstImage;
+  mainImage.alt = firstImage ? `Foto principal de ${publicText(property.title)}` : "Foto pendiente del inmueble";
+  mainImage.hidden = !firstImage;
 
   renderPriceBreakdown(property);
   renderStructuredData(property);
   renderNotice(property);
 
   const thumbs = document.querySelector("#thumbs");
-  thumbs.innerHTML = (property.images || [])
-    .map(
-      (image, index) => `
+  const images = property.images || [];
+  thumbs.innerHTML = images.length
+    ? images
+      .map(
+        (image, index) => `
         <button type="button" class="${index === 0 ? "active" : ""}" data-image="${escapeHtml(image)}" aria-label="Ver foto ${index + 1}">
           <img src="${escapeHtml(image)}" alt="Foto ${index + 1} de ${escapeHtml(publicText(property.title))}" loading="lazy">
         </button>
       `
-    )
-    .join("");
+      )
+      .join("")
+    : '<div class="image-placeholder gallery-placeholder"><span>Fotos pendientes por recargar</span></div>';
 
   thumbs.querySelectorAll("button").forEach((button) => {
     button.addEventListener("click", () => {
-      document.querySelector("#mainImage").src = button.dataset.image;
+      mainImage.hidden = false;
+      mainImage.src = button.dataset.image;
       thumbs.querySelectorAll("button").forEach((item) => item.classList.remove("active"));
       button.classList.add("active");
     });

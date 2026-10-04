@@ -1,1 +1,50 @@
-export const fallbackProperties = [];
+export const fallbackProperties = [
+  {
+    id: "tu-espacio-propio-en-nechi",
+    reference: "REC-001",
+    title: "Tu espacio propio en Nechí puede comenzar aquí",
+    type: "Casa",
+    operation: "Venta",
+    status: "Disponible",
+    price: "35000000",
+    rent: "",
+    adminFee: "",
+    otherCharges: "",
+    location: "Nechí, Antioquia",
+    municipality: "Nechí",
+    neighborhood: "Dato pendiente",
+    mapUrl: "",
+    videoUrl: "",
+    images: [],
+    features: ["Mejora en ladrillo rojo", "100 m²", "Patio"],
+    description:
+      "¿Por qué puede interesarte? Porque no siempre tienes que comenzar comprando una casa completamente terminada. Esta puede ser una alternativa para quien quiere tener lo suyo e ir construyendo o adecuando de acuerdo con sus posibilidades y necesidades. Dato pendiente por confirmar: barrio, ubicación exacta, fotografías y condiciones jurídicas.",
+    createdAt: "2026-10-04T00:00:00.000Z",
+    updatedAt: "2026-10-04T00:00:00.000Z",
+    recoveredFrom: "Captura de administración"
+  },
+  {
+    id: "casa-110-m2-amplio-patio-las-palmas",
+    reference: "REC-002",
+    title: "Casa de 110 m² con amplio patio en Las Palmas",
+    type: "Casa",
+    operation: "Venta",
+    status: "Disponible",
+    price: "110000000",
+    rent: "",
+    adminFee: "",
+    otherCharges: "",
+    location: "Las Palmas, Nechí",
+    municipality: "Nechí",
+    neighborhood: "Las Palmas",
+    mapUrl: "",
+    videoUrl: "",
+    images: [],
+    features: ["2 habitaciones", "Cocina integral", "Patio amplio", "Aire acondicionado"],
+    description:
+      "Cuenta con 2 habitaciones, cocina integral, amplia sala comedor, baño enchapado, aire acondicionado instalado y un gran patio, ideal para compartir reuniones, hacer un asado o simplemente disfrutar las tardes en casa. La propiedad cuenta además con rejas, cielo raso y buenos acabados, convirtiéndola en una excelente alternativa para quien busca comodidad, espacio y una casa lista para hacerla suya. Dato pendiente por confirmar: fotografías, ubicación exacta y condiciones jurídicas.",
+    createdAt: "2026-10-04T00:00:00.000Z",
+    updatedAt: "2026-10-04T00:00:00.000Z",
+    recoveredFrom: "Captura de administración"
+  }
+];

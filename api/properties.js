@@ -1,3 +1,4 @@
+import { fallbackProperties } from "./_fallback-properties.js";
 import { makeSlug, readProperties, requireAdmin, writeProperties } from "./_storage.js";
 
 export default async function handler(req, res) {
@@ -8,6 +9,9 @@ export default async function handler(req, res) {
         properties = await readProperties();
       } catch {
         properties = [];
+      }
+      if (properties.length === 0 && fallbackProperties.length > 0) {
+        properties = fallbackProperties;
       }
       return res.status(200).json({ properties });
     }
@@ -21,7 +25,10 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: "PIN_INVALIDO" });
     }
 
-    const current = await readProperties();
+    let current = await readProperties();
+    if (current.length === 0 && fallbackProperties.length > 0) {
+      current = fallbackProperties;
+    }
     const body = req.body || {};
     const now = new Date().toISOString();
     const existing = current.find((item) => item.id === body.id);
@@ -52,10 +59,6 @@ export default async function handler(req, res) {
 
     if (!property.title || !property.type || !property.operation || !property.price || !property.location || !property.description) {
       return res.status(400).json({ error: "Missing required property fields" });
-    }
-
-    if (property.images.length === 0) {
-      return res.status(400).json({ error: "At least one image is required" });
     }
 
     const properties =
