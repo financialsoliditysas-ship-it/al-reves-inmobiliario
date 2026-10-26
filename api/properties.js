@@ -1,5 +1,5 @@
 import { fallbackProperties } from "./_fallback-properties.js";
-import { makeSlug, readProperties, requireAdmin, writeProperties } from "./_storage.js";
+import { callBackend, makeSlug, readProperties, requireAdmin } from "./_supabase.js";
 
 export default async function handler(req, res) {
   try {
@@ -53,6 +53,10 @@ export default async function handler(req, res) {
       images: Array.isArray(body.images) ? body.images.filter(Boolean) : [],
       features: Array.isArray(body.features) ? body.features.filter(Boolean) : [],
       description: body.description,
+      media: [
+        ...(Array.isArray(body.images) ? body.images.filter(Boolean).map((url, index) => ({ kind: "image", url, position: index })) : []),
+        ...(body.videoUrl ? [{ kind: "video", url: body.videoUrl }] : [])
+      ],
       createdAt: existing?.createdAt || now,
       updatedAt: now
     };
@@ -61,18 +65,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing required property fields" });
     }
 
-    const properties =
-      req.method === "PUT"
-        ? current.map((item) => (item.id === property.id ? property : item))
-        : [property, ...current];
-
     if (req.method === "PUT" && !existing) {
       return res.status(404).json({ error: "Property not found" });
     }
 
-    await writeProperties(properties);
+    await callBackend("upsert_property", { property });
 
-    return res.status(req.method === "PUT" ? 200 : 201).json({ property, count: properties.length });
+    return res.status(req.method === "PUT" ? 200 : 201).json({ property });
   } catch (error) {
     return res.status(500).json({ error: error.message || "Unexpected error" });
   }

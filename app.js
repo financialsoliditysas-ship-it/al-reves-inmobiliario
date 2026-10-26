@@ -49,7 +49,7 @@ function publicText(value) {
 
 function imageMarkup(src, alt, className = "") {
   if (src) {
-    return `<img${className ? ` class="${className}"` : ""} src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy">`;
+    return `<img${className ? ` class="${className}"` : ""} src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><div class="image-placeholder${className ? ` ${className}` : ""}" role="img" aria-label="${escapeHtml(alt)}" hidden><span>Foto pendiente por recargar</span></div>`;
   }
 
   return `
@@ -59,11 +59,11 @@ function imageMarkup(src, alt, className = "") {
   `;
 }
 
-function trackMetric(event) {
+function trackMetric(event, propertyId = null) {
   fetch("/api/metrics", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ event }),
+    body: JSON.stringify({ event, propertyId }),
     keepalive: true
   }).catch(() => {});
 }
@@ -318,7 +318,7 @@ function selectProperty(id, fromUser = false) {
   if (!property) return;
 
   selectedProperty = property;
-  if (fromUser) trackMetric("property_views");
+  if (fromUser) trackMetric("property_views", property.id);
 
   document.querySelector("#detailReference").textContent = `Referencia: ${property.reference || property.id}`;
   document.querySelector("#detailOperation").textContent = property.operation || "Operación";
@@ -331,6 +331,10 @@ function selectProperty(id, fromUser = false) {
   mainImage.src = firstImage;
   mainImage.alt = firstImage ? `Foto principal de ${publicText(property.title)}` : "Foto pendiente del inmueble";
   mainImage.hidden = !firstImage;
+  mainImage.onerror = () => {
+    mainImage.hidden = true;
+    mainImage.removeAttribute("src");
+  };
 
   renderPriceBreakdown(property);
   renderStructuredData(property);
@@ -402,13 +406,19 @@ async function loadProperties() {
 function setupFilters() {
   els.moreFilters.open = window.matchMedia("(min-width: 981px)").matches;
 
+  let searchMetricTimer;
+  const recordSearch = () => {
+    clearTimeout(searchMetricTimer);
+    searchMetricTimer = setTimeout(() => trackMetric("searches"), 700);
+  };
+
   [els.searchInput, els.operationFilter, els.municipalityFilter, els.typeFilter, els.budgetFilter].forEach((input) => {
     input.addEventListener("input", () => {
-      trackMetric("searches");
+      recordSearch();
       renderProperties();
     });
     input.addEventListener("change", () => {
-      trackMetric("searches");
+      recordSearch();
       renderProperties();
     });
   });

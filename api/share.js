@@ -1,5 +1,5 @@
 import { fallbackProperties } from "./_fallback-properties.js";
-import { readProperties } from "./_storage.js";
+import { readProperties } from "./_supabase.js";
 
 function escapeHtml(value) {
   return String(value || "")

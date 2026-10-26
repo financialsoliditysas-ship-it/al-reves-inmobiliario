@@ -1,4 +1,5 @@
-import { handleUpload } from "@vercel/blob/client";
+import { callBackend, requireAdmin } from "./_supabase.js";
+import { randomUUID } from "node:crypto";
 
 const allowedContentTypes = [
   "image/jpeg",
@@ -16,27 +17,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const jsonResponse = await handleUpload({
-      body: req.body,
-      request: req,
-      onBeforeGenerateToken: async (pathname, clientPayload) => {
-        const configuredPin = process.env.ADMIN_PIN;
-        const providedPin = clientPayload;
-
-        if (!configuredPin || providedPin !== configuredPin) {
-          throw new Error("Unauthorized");
-        }
-
-        return {
-          allowedContentTypes,
-          addRandomSuffix: true,
-          tokenPayload: JSON.stringify({ pathname })
-        };
-      },
-      onUploadCompleted: async () => {}
-    });
-
-    return res.status(200).json(jsonResponse);
+    if (!requireAdmin(req)) return res.status(401).json({ error: "PIN_INVALIDO" });
+    const { fileName, contentType } = req.body || {};
+    if (!fileName || !allowedContentTypes.includes(contentType)) {
+      return res.status(400).json({ error: "Tipo de archivo no permitido" });
+    }
+    const safeName = String(fileName).replace(/[^a-zA-Z0-9._-]+/g, "-");
+    const path = `inmuebles/${Date.now()}-${randomUUID()}-${safeName}`;
+    return res.status(200).json(await callBackend("create_upload_token", { path, contentType }));
   } catch (error) {
     return res.status(400).json({ error: error.message || "Upload failed" });
   }

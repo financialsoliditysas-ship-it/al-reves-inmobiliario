@@ -1,4 +1,4 @@
-import { readMetrics, requireAdmin, writeMetrics } from "./_storage.js";
+import { callBackend, requireAdmin } from "./_supabase.js";
 
 const allowedEvents = [
   "views",
@@ -19,8 +19,7 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: "PIN_INVALIDO" });
       }
 
-      const metrics = await readMetrics();
-      return res.status(200).json({ metrics });
+      return res.status(200).json(await callBackend("metrics_summary"));
     }
 
     if (req.method !== "POST") {
@@ -33,16 +32,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Invalid metric event" });
     }
 
-    let metrics = {};
-    try {
-      metrics = await readMetrics();
-      metrics[body.event] = Number(metrics[body.event] || 0) + 1;
-      await writeMetrics(metrics);
-    } catch {
-      return res.status(200).json({ ok: true, stored: false });
-    }
-
-    return res.status(200).json({ ok: true, stored: true });
+    return res.status(200).json(await callBackend("metric", {
+      event: body.event,
+      propertyId: body.propertyId || null,
+      sessionHash: body.sessionHash || null,
+      metadata: body.metadata || {}
+    }));
   } catch (error) {
     return res.status(500).json({ error: error.message || "Unexpected error" });
   }

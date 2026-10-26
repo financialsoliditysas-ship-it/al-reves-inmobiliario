@@ -1,4 +1,9 @@
-import { upload } from "https://esm.sh/@vercel/blob/client";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
+
+const supabase = createClient(
+  "https://imskfyqryfdkciooobsb.supabase.co",
+  "sb_publishable_sPYgQH1mOYD_woV0fOdTag_Y5xTdSjb"
+);
 
 const form = document.querySelector("#propertyForm");
 const statusEl = document.querySelector("#adminStatus");
@@ -143,18 +148,46 @@ function splitFeatures(value) {
     .filter(Boolean);
 }
 
+async function optimizeImage(file) {
+  if (!file.type.startsWith("image/") || file.type === "image/gif") return file;
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, 1800 / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+  canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+  canvas.getContext("2d", { alpha: false }).drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  const blob = await new Promise((resolve, reject) => {
+    canvas.toBlob((result) => result ? resolve(result) : reject(new Error("No se pudo optimizar la imagen")), "image/webp", 0.82);
+  });
+  const baseName = file.name.replace(/\.[^.]+$/, "");
+  return new File([blob], `${baseName}.webp`, { type: "image/webp", lastModified: Date.now() });
+}
+
 async function uploadFiles(files, pin) {
   const urls = [];
 
   for (const file of files) {
-    setStatus(`Subiendo ${file.name}...`);
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, "-");
-    const blob = await upload(`inmuebles/${Date.now()}-${safeName}`, file, {
-      access: "public",
-      handleUploadUrl: "/api/upload",
-      clientPayload: pin
+    if (file.type.startsWith("video/") && file.size > 50 * 1024 * 1024) {
+      throw new Error(`El video ${file.name} supera el límite de 50 MB.`);
+    }
+    setStatus(`Optimizando y subiendo ${file.name}...`);
+    const preparedFile = await optimizeImage(file);
+    const tokenResponse = await fetch("/api/upload", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-admin-pin": pin },
+      body: JSON.stringify({ fileName: preparedFile.name, contentType: preparedFile.type })
     });
-    urls.push(blob.url);
+    const tokenResult = await tokenResponse.json();
+    if (!tokenResponse.ok) throw new Error(tokenResult.error || "No se pudo autorizar la carga");
+    const { error } = await supabase.storage.from("property-media").uploadToSignedUrl(
+      tokenResult.path,
+      tokenResult.token,
+      preparedFile,
+      { contentType: preparedFile.type }
+    );
+    if (error) throw error;
+    urls.push(tokenResult.publicUrl);
   }
 
   return urls;
